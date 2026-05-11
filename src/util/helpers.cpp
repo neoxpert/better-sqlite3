@@ -86,8 +86,8 @@ void SetPrototypeGetter(
 	v8::AccessorNameGetterCallback func
 ) {
 	v8::HandleScope scope(isolate);
-	#if V8_MAJOR_VERSION >= 12
-    	recv->InstanceTemplate()->SetNativeDataProperty(
+	#if V8_MAJOR_VERSION >= 14
+    recv->InstanceTemplate()->SetNativeDataProperty(
         InternalizedFromLatin1(isolate, name), // Name
         func,                                  // Getter
         nullptr,                               // Setter (explizit nullptr!)

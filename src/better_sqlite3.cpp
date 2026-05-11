@@ -58,8 +58,8 @@ NODE_MODULE_INIT(/* exports, context */) {
 	// Initialize addon instance.
 	Addon* addon = new Addon(isolate);
 
-	#if V8_MAJOR_VERSION >= 12
-	v8::Local<v8::External> data = v8::External::New(isolate, addon, v8::kExternalPointerTypeTagDefault);
+	#if V8_MAJOR_VERSION >= 14
+	v8::Local<v8::External> data = v8::External::New(isolate, addon, v8::External::kExternalPointerTypeTagDefault);
 	#else
 	v8::Local<v8::External> data = v8::External::New(isolate, addon);
 	#endif
