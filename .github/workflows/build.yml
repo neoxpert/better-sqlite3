@@ -19,7 +19,7 @@ env:
   NODE_BUILD_CMD_LEGACY: npx --no-install prebuild -r node -t 22.0.0 -t 24.0.0 --include-regex 'better_sqlite3.node$'
   # Node.js v25 EOL = 2026-06-01. v26 EOL = 2029-04-30.
   # Node.js 25+ requires GCC 11+ for <source_location> header (bookworm)
-  NODE_BUILD_CMD_MODERN: npx --no-install prebuild -r node -t 25.0.0 -t 26.0.0 --include-regex 'better_sqlite3.node$'
+  NODE_BUILD_CMD_25_PLUS: npx --no-install prebuild -r node -t 25.0.0 -t 26.0.0 --include-regex 'better_sqlite3.node$'
 
   # See https://www.electronjs.org/docs/latest/tutorial/electron-timelines#version-support-policy
   # Electron v29 EOL = 2024-08-20. v30 EOL = 2024-10-15. v31 EOL = 2025-01-14. v32 EOL = 2025-03-11. v33 EOL = 2025-05-13. v34 EOL = 2025-06-24. v35 EOL = 2025-09-02. v36 EOL = 2025-10-28. v37 EOL = 2026-01-13. v38 EOL = 2026-03-10.
@@ -28,11 +28,11 @@ env:
 
   # Electron v39 EOL = 2026-05-05. v40 EOL = 2026-06-30. v41 EOL = 2026-08-25. v42 EOL = 2026-09-22.
   # Electron 39+ requires GCC 11+ for <source_location> header (bookworm).
-  ELECTRON_BUILD_CMD_MODERN: npx --no-install prebuild -r electron -t 39.0.0 -t 40.0.0 -t 41.0.0 -t 42.3.0 --include-regex 'better_sqlite3.node$'
+  ELECTRON_BUILD_CMD_39_PLUS: npx --no-install prebuild -r electron -t 39.0.0 -t 40.0.0 -t 41.0.0 -t 42.3.0 --include-regex 'better_sqlite3.node$'
 
   # Electron v43 EOL = 2027-01-05
   # Electron v43+ requires GCC 13+ (trixie) as otherwise some macros from the v8 headers are not properly expanded.
-  ELECTRON_BUILD_CMD_V43ON: npx --no-install prebuild -r electron -t 43.0.0 --include-regex 'better_sqlite3.node$'
+  ELECTRON_BUILD_CMD_43_PLUS: npx --no-install prebuild -r electron -t 43.0.0 --include-regex 'better_sqlite3.node$'
 
 jobs:
   test:
@@ -95,12 +95,12 @@ jobs:
       - prebuild-alpine-arm
       - prebuild-linux-x64
       - prebuild-linux-arm
-      - prebuild-linux-x64-node-modern
-      - prebuild-linux-x64-electron-modern      
-      - prebuild-linux-x64-electron-v43on
-      - prebuild-linux-arm-node-modern
-      - prebuild-linux-arm64-electron-modern      
-      - prebuild-linux-arm64-electron-v43on
+      - prebuild-linux-x64-node-25-plus
+      - prebuild-linux-x64-electron-39-plus      
+      - prebuild-linux-x64-electron-43-plus
+      - prebuild-linux-arm-node-25-plus
+      - prebuild-linux-arm64-electron-39-plus      
+      - prebuild-linux-arm64-electron-43-plus
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -134,22 +134,22 @@ jobs:
         run: brew install python-setuptools
       - run: npm install --ignore-scripts
       - run: ${{ env.NODE_BUILD_CMD_LEGACY }} -u ${{ secrets.GITHUB_TOKEN }}
-      - run: ${{ env.NODE_BUILD_CMD_MODERN }} -u ${{ secrets.GITHUB_TOKEN }}
+      - run: ${{ env.NODE_BUILD_CMD_25_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}
       - run: ${{ env.ELECTRON_BUILD_CMD_LEGACY }} -u ${{ secrets.GITHUB_TOKEN }}
-      - run: ${{ env.ELECTRON_BUILD_CMD_MODERN }} -u ${{ secrets.GITHUB_TOKEN }}
-      - run: ${{ env.ELECTRON_BUILD_CMD_V43ON }} -u ${{ secrets.GITHUB_TOKEN }}
+      - run: ${{ env.ELECTRON_BUILD_CMD_39_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}
+      - run: ${{ env.ELECTRON_BUILD_CMD_43_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}
       - if: matrix.os == 'windows-2022'
         run: |
           ${{ env.NODE_BUILD_CMD_LEGACY }} --arch ia32 -u ${{ secrets.GITHUB_TOKEN }}
-          ${{ env.NODE_BUILD_CMD_MODERN }} --arch ia32 -u ${{ secrets.GITHUB_TOKEN }}
+          ${{ env.NODE_BUILD_CMD_25_PLUS }} --arch ia32 -u ${{ secrets.GITHUB_TOKEN }}
           ${{ env.NODE_BUILD_CMD_LEGACY }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}
-          ${{ env.NODE_BUILD_CMD_MODERN }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}
+          ${{ env.NODE_BUILD_CMD_25_PLUS }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}
           ${{ env.ELECTRON_BUILD_CMD_LEGACY }} --arch ia32 -u ${{ secrets.GITHUB_TOKEN }}
-          ${{ env.ELECTRON_BUILD_CMD_MODERN }} --arch ia32 -u ${{ secrets.GITHUB_TOKEN }}
-          ${{ env.ELECTRON_BUILD_CMD_V43ON }} --arch ia32 -u ${{ secrets.GITHUB_TOKEN }}
+          ${{ env.ELECTRON_BUILD_CMD_39_PLUS }} --arch ia32 -u ${{ secrets.GITHUB_TOKEN }}
+          ${{ env.ELECTRON_BUILD_CMD_43_PLUS }} --arch ia32 -u ${{ secrets.GITHUB_TOKEN }}
           ${{ env.ELECTRON_BUILD_CMD_LEGACY }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}
-          ${{ env.ELECTRON_BUILD_CMD_MODERN }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}
-          ${{ env.ELECTRON_BUILD_CMD_V43ON }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}
+          ${{ env.ELECTRON_BUILD_CMD_39_PLUS }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}
+          ${{ env.ELECTRON_BUILD_CMD_43_PLUS }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}
 
   prebuild-linux-x64:
     if: ${{ github.event_name == 'release' }}
@@ -163,7 +163,7 @@ jobs:
       - run: ${{ env.NODE_BUILD_CMD_LEGACY }} -u ${{ secrets.GITHUB_TOKEN }}
       - run: ${{ env.ELECTRON_BUILD_CMD_LEGACY }} -u ${{ secrets.GITHUB_TOKEN }}
 
-  prebuild-linux-x64-node-modern:
+  prebuild-linux-x64-node-25-plus:
     if: ${{ github.event_name == 'release' }}
     name: Prebuild on Linux x64 (Node 25+)
     runs-on: ubuntu-latest
@@ -172,9 +172,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: npm install --ignore-scripts
-      - run: ${{ env.NODE_BUILD_CMD_MODERN }} -u ${{ secrets.GITHUB_TOKEN }}
+      - run: ${{ env.NODE_BUILD_CMD_25_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}
 
-  prebuild-linux-x64-electron-modern:
+  prebuild-linux-x64-electron-39-plus:
     if: ${{ github.event_name == 'release' }}
     name: Prebuild on Linux x64 (Electron 39+)
     runs-on: ubuntu-latest
@@ -183,9 +183,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: npm install --ignore-scripts
-      - run: ${{ env.ELECTRON_BUILD_CMD_MODERN }} -u ${{ secrets.GITHUB_TOKEN }}
+      - run: ${{ env.ELECTRON_BUILD_CMD_39_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}
 
-  prebuild-linux-x64-electron-v43on:
+  prebuild-linux-x64-electron-43-plus:
     if: ${{ github.event_name == 'release' }}
     name: Prebuild on Linux x64 (Electron 43+)
     runs-on: ubuntu-latest
@@ -194,7 +194,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: npm install --ignore-scripts
-      - run: ${{ env.ELECTRON_BUILD_CMD_V43ON }} -u ${{ secrets.GITHUB_TOKEN }}
+      - run: ${{ env.ELECTRON_BUILD_CMD_43_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}
 
   prebuild-alpine:
     if: ${{ github.event_name == 'release' }}
@@ -207,7 +207,7 @@ jobs:
       - run: apk add build-base git python3 py3-setuptools --update-cache
       - run: npm install --ignore-scripts
       - run: ${{ env.NODE_BUILD_CMD_LEGACY }} -u ${{ secrets.GITHUB_TOKEN }}
-      - run: ${{ env.NODE_BUILD_CMD_MODERN }} -u ${{ secrets.GITHUB_TOKEN }}
+      - run: ${{ env.NODE_BUILD_CMD_25_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}
 
   prebuild-alpine-arm:
     if: ${{ github.event_name == 'release' }}
@@ -229,7 +229,7 @@ jobs:
           cd /tmp/project && \
           npm install --ignore-scripts && \
           ${{ env.NODE_BUILD_CMD_LEGACY }} -u ${{ secrets.GITHUB_TOKEN }} && \
-          ${{ env.NODE_BUILD_CMD_MODERN }} -u ${{ secrets.GITHUB_TOKEN }}"
+          ${{ env.NODE_BUILD_CMD_25_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}"
 
   prebuild-linux-arm:
     if: ${{ github.event_name == 'release' }}
@@ -252,7 +252,7 @@ jobs:
           ${{ env.NODE_BUILD_CMD_LEGACY }} -u ${{ secrets.GITHUB_TOKEN }} && \
           if [ '${{ matrix.arch }}' = 'arm64' ]; then ${{ env.ELECTRON_BUILD_CMD_LEGACY }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}; fi"
 
-  prebuild-linux-arm-node-modern:
+  prebuild-linux-arm-node-25-plus:
     if: ${{ github.event_name == 'release' }}
     strategy:
       fail-fast: false
@@ -270,9 +270,9 @@ jobs:
           docker run --rm -v $(pwd):/tmp/project --entrypoint /bin/sh --platform linux/${{ matrix.arch }} node:20-bookworm -c "\
           cd /tmp/project && \
           npm install --ignore-scripts && \
-          ${{ env.NODE_BUILD_CMD_MODERN }} -u ${{ secrets.GITHUB_TOKEN }}"
+          ${{ env.NODE_BUILD_CMD_25_PLUS }} -u ${{ secrets.GITHUB_TOKEN }}"
 
-  prebuild-linux-arm64-electron-modern:
+  prebuild-linux-arm64-electron-39-plus:
     if: ${{ github.event_name == 'release' }}
     name: Prebuild on Linux arm64 (Electron 39+)
     runs-on: ubuntu-latest
@@ -284,9 +284,9 @@ jobs:
           docker run --rm -v $(pwd):/tmp/project --entrypoint /bin/sh --platform linux/arm64 node:20-bookworm -c "\
           cd /tmp/project && \
           npm install --ignore-scripts && \
-          ${{ env.ELECTRON_BUILD_CMD_MODERN }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}"
+          ${{ env.ELECTRON_BUILD_CMD_39_PLUS }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}"
 
-  prebuild-linux-arm64-electron-v43on:
+  prebuild-linux-arm64-electron-43-plus:
     if: ${{ github.event_name == 'release' }}
     name: Prebuild on Linux arm64 (Electron 43+)
     runs-on: ubuntu-latest
@@ -298,4 +298,4 @@ jobs:
           docker run --rm -v $(pwd):/tmp/project --entrypoint /bin/sh --platform linux/arm64 node:20-trixie -c "\
           cd /tmp/project && \
           npm install --ignore-scripts && \
-          ${{ env.ELECTRON_BUILD_CMD_V43ON }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}"
+          ${{ env.ELECTRON_BUILD_CMD_43_PLUS }} --arch arm64 -u ${{ secrets.GITHUB_TOKEN }}"
