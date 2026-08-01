@@ -50,7 +50,7 @@ jobs:
           node -e "require('./lib/index.js')(':memory:').loadExtension('mod_spatialite').exec('SELECT InitSpatialMetaData();')"
 
   prebuild:
-    if: ${{ github.event_name == 'release' }}
+    if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
     needs: test
     strategy:
       fail-fast: false
